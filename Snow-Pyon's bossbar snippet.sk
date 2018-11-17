@@ -1,0 +1,132 @@
+import:
+	#Bukkit imports
+	org.bukkit.Bukkit
+	org.bukkit.boss.BarColor
+	org.bukkit.boss.BarStyle
+	org.bukkit.boss.BarFlag
+
+#function sendBossBar:
+#Sends a bossbar to the specified players.
+
+#Parameters:
+#title:
+#  Default value: none
+#  Description: the text to be displayed above the bar
+
+#targets:
+#  Default value: none
+#  Description: the players that will see the bar
+
+#display-time:
+#  Default value: 5 seconds
+#  Description: the time the bar will be displayed to the players
+
+#color:
+#  Default value: "purple"
+#  Description: the color of the the bar. The possible values are: blue, green, pink, purple, red, white and yellow
+
+#progress:
+#  Default value: 100
+#  Description: the current bar progress, must be an integer between 0 and 100
+
+#style:
+#  Default value: "solid"
+#  Description: the style the bar will have. The possible values are: segmented_10, segmented_12, segmented_20, segmented_6 and solid
+
+#flags:
+#  Default values: none
+#  Description: the flags that the bar will have, optional. The possible values are: create_fog, darken_sky and play_boss_music
+
+function sendBossBar(title: text, targets: players, display-time: time span = 5 seconds, color: text = "purple", progress: integer = 100, style: text = "solid", flags: strings = "play_boss_music"):
+	
+	set {_bar-color} to BarColor.valueOf({_color} in upper case)
+	set {_progress} to {_progress}/100
+	set {_bar-style} to BarStyle.valueOf({_style} in upper case)
+
+	loop {_flags::*}:
+
+		set {_bar-flags::%loop-index%} to  BarFlag.valueOf(loop-value in upper case)
+
+	set {_args::*} to {_title}, {_bar-color}, {_bar-style} and {_bar-flags::*}
+	set {_bossbar} to Bukkit.createBossBar({_args::*})
+	{_bossbar}.setProgress({_progress})
+
+	loop {_targets::*}:
+
+		{_bossbar}.addPlayer(loop-value)
+
+	{_bossbar}.setVisible(true)
+	wait {_display-time}
+	{_bossbar}.setVisible(false)
+	{_bossbar}.removeAll()
+
+#function sendAnimatedBossBar:
+#Sends a bossbar with animated title to the specified players.
+
+#Parameters:
+#title-frames:
+#  Default value: none
+#  Description: the animated text to be displayed above the bar
+
+#targets:
+#  Default value: none
+#  Description: the players that will see the bar
+
+#time-per-frame:
+#  Default value: 3 ticks
+#  Description: the time waited per title frame
+
+#stop-after:
+#  Default value: 5 seconds
+#  Description: how much the bar lasts
+
+#color:
+#  Default value: "purple"
+#  Description: the color of the the bar. The possible values are: blue, green, pink, purple, red, white and yellow
+
+#style:
+#  Default value: "solid"
+#  Description: the style the bar will have. The possible values are: segmented_10, segmented_12, segmented_20, segmented_6 and solid
+
+#flags:
+#  Default values: none
+#  Description: the flags that the bar will have, optional. The possible values are: create_fog, darken_sky and play_boss_music
+
+function sendAnimatedBossBar(title-frames: texts, targets: players, time-per-frame: time span = 3 ticks, stop-after: time span = 5 seconds, color: text = "purple", style: text = "solid", flags: texts = "play_boss_music"):
+	
+	set {_bar-color} to BarColor.valueOf({_color} in upper case)
+	set {_bar-style} to BarStyle.valueOf({_style} in upper case)
+
+	loop {_flags::*}:
+		set {_bar-flags::%loop-index%} to BarFlag.valueOf(loop-value in upper case)
+
+	set {_args::*} to "", {_bar-color}, {_bar-style} and {_bar-flags::*}
+	set {_bossbar} to Bukkit.createBossBar({_args::*})
+
+	loop {_targets::*}:
+		{_bossbar}.addPlayer(loop-value)
+
+	{_bossbar}.setVisible(true)
+
+	set {_start} to now
+
+	while difference between {_start} and now < {_stop-after}:
+
+		if {_current} is not equal to (amount of {_title-frames::*}) ? 1:
+			set {_current} to {_current} + 1
+		{_bossbar}.setTitle({_title-frames::%{_current}%})
+
+		wait {_time-per-frame}
+
+	{_bossbar}.setVisible(false)
+	{_bossbar}.removeAll()
+
+# Examples
+
+command /split [<text="Hey, this is an example!">]:
+	trigger:
+		set {_e} to 0
+		loop length of arg 1 times:
+			set {_e} to {_e} + 1
+			set {_l::%{_e}%} to first loop-value characters of arg 1
+		sendAnimatedBossBar({_l::*}, player)
