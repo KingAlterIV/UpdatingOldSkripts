@@ -1,4 +1,4 @@
-Snow-Pyon's self PC shutdown snippet.sk
+# This Skript only shuts down your PC, but others.
 
 import:
 	java.lang.System

@@ -1,0 +1,23 @@
+# You will only hear this text to speech if your sounds are on.
+
+import:
+	java.io.File
+	java.io.FileWriter
+	java.lang.System
+	java.lang.Runtime
+
+function textToSpeech(text: text):
+ 
+	set {_new-line} to System.getProperty("line.separator")
+	set {_vbsFile} to File.createTempFile("text2speech" and ".vbs")
+	set {_vbsFileWriter} to new FileWriter({_vbsFile})
+	set {_vbsCode} to "dim speechobject%{_new-line}%set speechobject=createobject(""sapi.spvoice"")%{_new-line}%speechobject.speak ""%{_text}%"""
+ 
+	{_vbsFileWriter}.write({_vbsCode})
+	{_vbsFileWriter}.close()
+ 
+	Runtime.getRuntime().exec("wscript %{_vbsFile}.getPath()%")
+ 
+	wait 2 ticks
+ 
+	{_vbsFile}.delete()
