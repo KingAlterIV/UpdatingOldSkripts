@@ -1,3 +1,6 @@
+# Requirements
+# skript-mirror 0.19.1
+
 import:
 	#Bukkit imports
 	org.bukkit.Bukkit
