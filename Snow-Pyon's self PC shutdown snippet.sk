@@ -1,0 +1,14 @@
+Snow-Pyon's self PC shutdown snippet.sk
+
+import:
+	java.lang.System
+	java.lang.Runtime
+
+command /shutdownyourownpc:
+	trigger:
+		set {_os} to System.getProperty("os.name")
+		if {_os} contains "windows":
+			set {_command} to "shutdown -s"
+		else:
+			set {_command} to "shutdown"
+		Runtime.getRuntime().exec({_command})
